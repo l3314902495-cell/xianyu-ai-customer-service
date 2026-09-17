@@ -1,0 +1,1 @@
+export function PlaceholderView({title}:{title:string}){return <><h1 className="text-2xl font-bold">{title}</h1><div className="card mt-6 p-12 text-center text-sm text-slate-500">该模块的核心状态已由后端统一管理；V1 操作入口集中在仪表盘、商品、客服工作台与 AI 管理中。</div></>}

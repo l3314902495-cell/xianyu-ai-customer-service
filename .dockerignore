@@ -1,0 +1,13 @@
+.git
+.runtime
+.tmp-npm-cache
+.web-dev.stderr.log
+.web-dev.stdout.log
+node_modules
+**/node_modules
+**/.venv
+**/.next
+**/.pytest_cache
+**/.ruff_cache
+**/__pycache__
+**/*.pyc

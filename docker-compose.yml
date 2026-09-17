@@ -1,0 +1,68 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: xianyu_ai
+      POSTGRES_USER: xianyu
+      POSTGRES_PASSWORD: xianyu
+    volumes: [postgres_data:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U xianyu -d xianyu_ai"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    volumes: [redis_data:/data]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  api:
+    image: wo-xi-api:latest
+    build: {context: ., dockerfile: docker/api.Dockerfile}
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://xianyu:xianyu@postgres:5432/xianyu_ai}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      JWT_SECRET: ${JWT_SECRET:-local-docker-change-in-production}
+      LLM_PROVIDER: ${LLM_PROVIDER:-mock}
+      LLM_BASE_URL: ${LLM_BASE_URL:-https://api.openai.com/v1}
+      LLM_API_KEY: ${LLM_API_KEY:-}
+      LLM_MODEL: ${LLM_MODEL:-gpt-4.1-mini}
+      XIANYU_RUNTIME_MODE: api
+    ports: ["8000:8000"]
+    depends_on:
+      postgres: {condition: service_healthy}
+      redis: {condition: service_healthy}
+    command: sh -c "alembic upgrade head && python -m app.seed && uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    restart: unless-stopped
+  xianyu-listener:
+    image: wo-xi-listener:latest
+    build: {context: ., dockerfile: docker/api.Dockerfile}
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://xianyu:xianyu@postgres:5432/xianyu_ai}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      JWT_SECRET: ${JWT_SECRET:-local-docker-change-in-production}
+      LLM_PROVIDER: ${LLM_PROVIDER:-mock}
+      LLM_BASE_URL: ${LLM_BASE_URL:-https://api.openai.com/v1}
+      LLM_API_KEY: ${LLM_API_KEY:-}
+      LLM_MODEL: ${LLM_MODEL:-gpt-4.1-mini}
+      XIANYU_RUNTIME_MODE: listener
+    depends_on:
+      postgres: {condition: service_healthy}
+      redis: {condition: service_healthy}
+    command: python -m app.listener_main
+    restart: unless-stopped
+  web:
+    image: wo-xi-web:latest
+    build: {context: ., dockerfile: docker/web.Dockerfile}
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+    ports: ["3000:3000"]
+    depends_on: [api]
+    restart: unless-stopped
+volumes:
+  postgres_data:
+  redis_data:

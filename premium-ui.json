@@ -1,0 +1,27 @@
+{
+  "profile": "product-admin",
+  "locale": "zh-CN",
+  "sourceRoots": ["apps/web/app", "apps/web/src"],
+  "designDocument": "DESIGN.md",
+  "uxContract": "UX-CONTRACT.md",
+  "canonicalMap": "UX-CONTRACT.md",
+  "ownership": {
+    "Select/Listbox": "native",
+    "Form": "apps/web/src/components/interaction.tsx",
+    "Dialog": "apps/web/src/components/confirm-dialog.tsx",
+    "Drawer": "apps/web/src/components/interaction.tsx",
+    "Tabs": "apps/web/src/components/interaction.tsx",
+    "StatusBadge": "apps/web/src/components/interaction.tsx",
+    "Toast": "apps/web/src/components/toast.tsx",
+    "Scrollbar": "apps/web/app/globals.css"
+  },
+  "requiredCapabilities": ["Select/Listbox", "Form", "Scrollbar", "Toast", "CRUD"],
+  "commands": {
+    "lint": "pnpm --filter @xianyu/web lint",
+    "typecheck": "pnpm --filter @xianyu/web typecheck",
+    "unit": "pnpm --filter @xianyu/web test",
+    "build": "pnpm --filter @xianyu/web build"
+  },
+  "requiredCommands": ["lint", "typecheck", "unit", "build"],
+  "evidencePaths": ["apps/web/app", "apps/web/src", "DESIGN.md", "UX-CONTRACT.md"]
+}

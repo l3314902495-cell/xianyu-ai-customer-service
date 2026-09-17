@@ -1,0 +1,8 @@
+packages:
+  - apps/*
+
+# pnpm 11 blocks dependency lifecycle scripts unless they are explicitly
+# trusted. These two packages are build-time dependencies used by Next.js.
+allowBuilds:
+  esbuild: true
+  sharp: true
