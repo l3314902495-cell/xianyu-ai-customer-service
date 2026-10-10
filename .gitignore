@@ -1,5 +1,8 @@
 .env
-.env.local
+.env.*
+!.env.example
+.agents/
+.codex/
 node_modules/
 .runtime/
 .next/
@@ -10,6 +13,12 @@ __pycache__/
 .venv/
 *.pyc
 *.db
+*.db-*
+*.sqlite
+*.sqlite3
+*.sqlite3-*
+*.pem
+*.key
 .coverage
 htmlcov/
 work/
@@ -20,3 +29,9 @@ test-results/
 *.tsbuildinfo
 *.egg-info/
 .tmp-npm-cache/
+# Personal documents do not belong in the source repository.
+/*.docx
+/*.xlsx
+/*.pdf
+.DS_Store
+Thumbs.db
